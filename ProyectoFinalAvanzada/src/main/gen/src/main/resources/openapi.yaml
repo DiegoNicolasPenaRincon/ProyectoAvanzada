@@ -1,0 +1,1415 @@
+openapi: 3.0.0
+info:
+  description: API para reportar incidentes ciudadanos en tiempo real.
+  title: Plataforma de Reportes de Seguridad
+  version: 1.0.0
+servers:
+- description: Servidor de producción
+  url: https://api.reportes-ciudad.com/v1
+- description: Servidor local para desarrollo
+  url: http://localhost:8080
+paths:
+  /auth/register:
+    post:
+      description: Registra un nuevo usuario en la plataforma.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioRegistro'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_register_post_201_response'
+          description: Usuario registrado con éxito
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_register_post_400_response'
+          description: Error en la solicitud
+      summary: Registro de usuario
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: user
+  /auth/verify:
+    post:
+      description: Permite a un usuario verificar su cuenta con el código enviado
+        por correo electrónico.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/verificarCodigo'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_verify_post_200_response'
+          description: Cuenta verificada con éxito
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_verify_post_400_response'
+          description: Código incorrecto o expirado
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_verify_post_404_response'
+          description: Usuario no encontrado
+      summary: Verificación de cuenta
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: user
+  /auth/login:
+    post:
+      description: Permite a un usuario autenticarse en la plataforma.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_login_post_200_response'
+          description: Inicio de sesión exitoso
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_login_post_401_response'
+          description: Credenciales inválidas
+      summary: Inicio de sesión
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: user
+      - tag: admin
+  /auth/perfil:
+    delete:
+      description: Permite a un usuario eliminar su cuenta de la plataforma.
+      parameters:
+      - description: Debe enviarse como 'true' para confirmar la eliminación.
+        explode: true
+        in: query
+        name: confirmar
+        required: true
+        schema:
+          type: boolean
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_perfil_delete_200_response'
+          description: Perfil eliminado con éxito.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_perfil_delete_400_response'
+          description: Falta confirmación para eliminar la cuenta.
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_perfil_delete_401_response'
+          description: No autorizado.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_perfil_delete_500_response'
+          description: Error interno del servidor.
+      summary: Eliminar perfil de usuario
+      tags:
+      - user
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: user
+      - tag: admin
+    put:
+      description: "Permite al usuario modificar su información personal, incluyendo\
+        \ nombre, ubicación, correo y contraseña."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioEditar'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_perfil_put_200_response'
+          description: Datos actualizados correctamente.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_auth_perfil_put_400_response'
+          description: Error en la solicitud
+      summary: Editar perfil del usuario
+      tags:
+      - user
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: user
+  /reportes:
+    get:
+      description: Devuelve la lista de reportes registrados en el sistema.
+      parameters:
+      - explode: true
+        in: query
+        name: categoria
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: estado
+        required: false
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Reporte'
+                type: array
+          description: Lista de reportes obtenida con éxito
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes_get_500_response'
+          description: Error interno del servidor
+      summary: Obtener todos los reportes
+      tags:
+      - report
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: report
+    post:
+      description: Permite a un usuario reportar un incidente.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reporte'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes_post_201_response'
+          description: Reporte creado con éxito
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes_post_400_response'
+          description: Datos inválidos
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes_post_500_response'
+          description: Error interno del servidor
+      summary: Crear un reporte
+      tags:
+      - report
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: report
+  /reportes/{id}:
+    delete:
+      description: Permite eliminar un reporte por su ID.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__delete_200_response'
+          description: Reporte eliminado con éxito.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__delete_400_response'
+          description: Falta confirmación para eliminar el reporte.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__put_404_response'
+          description: Reporte no encontrado.
+      summary: Eliminar un reporte
+      tags:
+      - report
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: report
+    put:
+      description: Permite modificar un reporte existente.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReporteEditar'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__put_200_response'
+          description: Reporte actualizado con éxito.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__put_400_response'
+          description: Datos inválidos.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__put_404_response'
+          description: Reporte no encontrado.
+      summary: Editar un reporte
+      tags:
+      - report
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: report
+  /reportes/{id}/comentarios:
+    get:
+      description: Devuelve la lista de comentarios asociados a un reporte.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Comentario'
+                type: array
+          description: Lista de comentarios obtenida con éxito.
+        "404":
+          description: Reporte no encontrado.
+      summary: Obtener comentarios de un reporte
+      tags:
+      - report
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: report
+    post:
+      description: Permite a los usuarios agregar comentarios en un reporte existente.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comentario'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__comentarios_post_201_response'
+          description: Comentario agregado con éxito.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__comentarios_post_400_response'
+          description: Datos inválidos.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__put_404_response'
+          description: Reporte no encontrado.
+      summary: Agregar un comentario a un reporte
+      tags:
+      - report
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: report
+  /reportes/{id}/comentarios/{comentarioId}:
+    delete:
+      description: Permite a un usuario eliminar su comentario o a un administrador
+        eliminar cualquier comentario.
+      parameters:
+      - description: ID del reporte donde está el comentario.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: ID del comentario a eliminar.
+        explode: false
+        in: path
+        name: comentarioId
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__comentarios__comentarioId__delete_200_response'
+          description: Comentario eliminado con éxito.
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__comentarios__comentarioId__delete_403_response'
+          description: No autorizado para eliminar el comentario.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__comentarios__comentarioId__delete_404_response'
+          description: Comentario no encontrado.
+      summary: Eliminar un comentario
+      tags:
+      - report
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: report
+    put:
+      description: Permite a un usuario modificar su comentario en un reporte.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: false
+        in: path
+        name: comentarioId
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComentarioEditar'
+        required: true
+      responses:
+        "200":
+          description: Comentario actualizado con éxito.
+        "403":
+          description: No autorizado para editar este comentario.
+        "404":
+          description: Comentario no encontrado.
+      summary: Editar un comentario
+      tags:
+      - report
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: report
+  /admin/perfil:
+    put:
+      description: "Permite a un administrador modificar su nombre, correo y contraseñ\
+        a."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminEditar'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_perfil_put_200_response'
+          description: Perfil de administrador actualizado con éxito.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__put_400_response'
+          description: Datos inválidos.
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_perfil_put_401_response'
+          description: No autorizado.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_perfil_put_404_response'
+          description: Administrador no encontrado.
+      summary: Editar perfil del administrador
+      tags:
+      - admin
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: admin
+  /admin/categorias:
+    post:
+      description: Permite al administrador crear una categoria de reporte
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Categoria'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_categorias_post_201_response'
+          description: Reporte creado con éxito
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_categorias_post_400_response'
+          description: Datos inválidos
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes_post_500_response'
+          description: Error interno del servidor
+      summary: Crear una categoria
+      tags:
+      - admin
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: admin
+  /admin/categorias/{id}:
+    delete:
+      description: Permite eliminar una categoría por su ID.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_categorias__id__delete_200_response'
+          description: Categoría eliminada con éxito.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_categorias__id__delete_400_response'
+          description: No se puede eliminar la categoría.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_categorias__id__put_404_response'
+          description: Categoría no encontrada.
+      summary: Eliminar una categoría
+      tags:
+      - admin
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: admin
+    put:
+      description: Permite modificar el nombre y la descripción de una categoría.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoriaEditar'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_categorias__id__put_200_response'
+          description: Categoría actualizada con éxito.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_reportes__id__put_400_response'
+          description: Datos inválidos.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_admin_categorias__id__put_404_response'
+          description: Categoría no encontrada.
+      summary: Editar una categoría
+      tags:
+      - admin
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: admin
+  /notificaciones:
+    get:
+      description: Permite a un usuario ver todas sus notificaciones recibidas.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Notificacion'
+                type: array
+          description: Lista de notificaciones obtenida con éxito.
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_notificaciones_get_401_response'
+          description: No autorizado.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_notificaciones_get_500_response'
+          description: Error interno del servidor.
+      summary: Obtener notificaciones del usuario
+      tags:
+      - notifications
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: notifications
+    post:
+      description: Envía una notificación a usuarios que se encuentran cerca del reporte.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notificacion'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_notificaciones_post_200_response'
+          description: Notificación enviada con éxito.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_notificaciones_post_400_response'
+          description: Datos inválidos.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_notificaciones_post_500_response'
+          description: Error interno del servidor.
+      summary: Enviar notificación a usuarios cercanos
+      tags:
+      - notifications
+      x-content-type: application/json
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: notifications
+  /notificaciones/{id}/leer:
+    put:
+      description: Permite a un usuario marcar una notificación como leída.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Notificación marcada como leída.
+        "404":
+          description: Notificación no encontrada.
+      summary: Marcar notificación como leída
+      tags:
+      - notifications
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: notifications
+  /notificaciones/{id}:
+    get:
+      description: Devuelve la información completa de una notificación específica.
+      parameters:
+      - explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notificacion'
+          description: Notificación encontrada.
+        "404":
+          description: Notificación no encontrada.
+      summary: Obtener detalles de una notificación
+      tags:
+      - notifications
+      x-accepts:
+      - application/json
+      x-tags:
+      - tag: notifications
+components:
+  schemas:
+    UsuarioRegistro:
+      example:
+        ubicacion:
+          latitud: 0.8008281904610115
+          longitud: 6.027456183070403
+        ciudadResidencia: ciudadResidencia
+        correo: correo
+        direccion: direccion
+        id: id
+        telefono: telefono
+        nombre: nombre
+        contraseña: contraseña
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        ciudadResidencia:
+          type: string
+        telefono:
+          type: string
+        direccion:
+          type: string
+        correo:
+          format: email
+          type: string
+        contraseña:
+          format: password
+          type: string
+        ubicacion:
+          $ref: '#/components/schemas/UsuarioRegistro_ubicacion'
+      required:
+      - ciudadResidencia
+      - contraseña
+      - correo
+      - direccion
+      - id
+      - nombre
+      - telefono
+      - ubicacion
+      type: object
+    verificarCodigo:
+      properties:
+        correo:
+          example: usuario@email.com
+          format: email
+          type: string
+        codigo:
+          example: A1B2C3
+          type: string
+      required:
+      - codigo
+      - correo
+      type: object
+    UsuarioEditar:
+      example:
+        ubicacion:
+          latitud: 0.8008281904610115
+          longitud: 6.027456183070403
+        ciudadResidencia: ciudadResidencia
+        correo: correo
+        direccion: direccion
+        telefono: telefono
+        nombre: nombre
+        contraseña: contraseña
+      properties:
+        nombre:
+          type: string
+        ciudadResidencia:
+          type: string
+        telefono:
+          type: string
+        direccion:
+          type: string
+        correo:
+          format: email
+          type: string
+        contraseña:
+          format: password
+          type: string
+        ubicacion:
+          $ref: '#/components/schemas/UsuarioRegistro_ubicacion'
+      required:
+      - correo
+      type: object
+    Login:
+      example:
+        correo: correo
+        contraseña: contraseña
+      properties:
+        correo:
+          format: email
+          type: string
+        contraseña:
+          format: password
+          type: string
+      required:
+      - contraseña
+      - correo
+      type: object
+    Reporte:
+      example:
+        descripcion: descripcion
+        ubicacion:
+          latitud: 0.8008281904610115
+          longitud: 6.027456183070403
+        imagenes:
+        - https://openapi-generator.tech
+        - https://openapi-generator.tech
+        categoria: categoria
+        titulo: titulo
+        id: id
+      properties:
+        id:
+          type: string
+        titulo:
+          type: string
+        categoria:
+          type: string
+        descripcion:
+          type: string
+        ubicacion:
+          $ref: '#/components/schemas/UsuarioRegistro_ubicacion'
+        imagenes:
+          items:
+            format: uri
+            type: string
+          type: array
+      required:
+      - categoria
+      - descripcion
+      - titulo
+      - ubicacion
+      type: object
+    ReporteEditar:
+      example:
+        descripcion: descripcion
+        ubicacion:
+          latitud: 0.8008281904610115
+          longitud: 6.027456183070403
+        imagenes:
+        - https://openapi-generator.tech
+        - https://openapi-generator.tech
+        categoria: categoria
+        titulo: titulo
+      properties:
+        titulo:
+          type: string
+        categoria:
+          type: string
+        descripcion:
+          type: string
+        ubicacion:
+          $ref: '#/components/schemas/UsuarioRegistro_ubicacion'
+        imagenes:
+          items:
+            format: uri
+            type: string
+          type: array
+      type: object
+    Categoria:
+      example:
+        descripcion: "Reportes de accidentes de tránsito, problemas de salud en la\
+          \ vía pública, etc."
+        id: id
+        nombre: Emergencias Médicas
+      properties:
+        id:
+          type: string
+        nombre:
+          example: Emergencias Médicas
+          type: string
+        descripcion:
+          example: "Reportes de accidentes de tránsito, problemas de salud en la ví\
+            a pública, etc."
+          type: string
+      required:
+      - descripcion
+      - nombre
+      type: object
+    CategoriaEditar:
+      example:
+        descripcion: "Reportes de terremotos, incendios, y otras emergencias."
+        nombre: Emergencias y Desastres
+      properties:
+        nombre:
+          example: Emergencias y Desastres
+          type: string
+        descripcion:
+          example: "Reportes de terremotos, incendios, y otras emergencias."
+          type: string
+      type: object
+    Comentario:
+      example:
+        fecha: 2024-03-10T14:30:00Z
+        contenido: Este incidente también afectó mi zona.
+        usuarioId: "123"
+      properties:
+        usuarioId:
+          example: "123"
+          type: string
+        contenido:
+          example: Este incidente también afectó mi zona.
+          type: string
+        fecha:
+          example: 2024-03-10T14:30:00Z
+          format: date-time
+          type: string
+      required:
+      - contenido
+      - usuarioId
+      type: object
+    ComentarioEditar:
+      example:
+        contenido: He actualizado mi comentario sobre este incidente.
+      properties:
+        contenido:
+          example: He actualizado mi comentario sobre este incidente.
+          type: string
+      required:
+      - contenido
+      type: object
+    Notificacion:
+      example:
+        fecha: 2024-03-10T14:30:00Z
+        mensaje: Nuevo reporte de accidente cercano a tu ubicación.
+        enlaceReporte: https://miapp.com/reportes/reporte567
+        reporteId: reporte567
+        usuarioId: abc123
+      properties:
+        usuarioId:
+          example: abc123
+          type: string
+        reporteId:
+          example: reporte567
+          type: string
+        mensaje:
+          example: Nuevo reporte de accidente cercano a tu ubicación.
+          type: string
+        fecha:
+          example: 2024-03-10T14:30:00Z
+          format: date-time
+          type: string
+        enlaceReporte:
+          example: https://miapp.com/reportes/reporte567
+          format: uri
+          type: string
+      required:
+      - fecha
+      - mensaje
+      - reporteId
+      - usuarioId
+      type: object
+    AdminEditar:
+      example:
+        correo: admin@empresa.com
+        nombre: Administrador Principal
+        contraseña: NuevaClaveSegura123
+      properties:
+        nombre:
+          example: Administrador Principal
+          type: string
+        correo:
+          example: admin@empresa.com
+          format: email
+          type: string
+        contraseña:
+          example: NuevaClaveSegura123
+          format: password
+          type: string
+      required:
+      - contraseña
+      - correo
+      - nombre
+      type: object
+    _auth_register_post_201_response:
+      example:
+        mensaje: Usuario registrado con éxito. Verifique su correo electrónico.
+      properties:
+        mensaje:
+          example: Usuario registrado con éxito. Verifique su correo electrónico.
+          type: string
+      type: object
+    _auth_register_post_400_response:
+      example:
+        error: El correo ya está registrado.
+      properties:
+        error:
+          example: El correo ya está registrado.
+          type: string
+      type: object
+    _auth_verify_post_200_response:
+      example:
+        mensaje: Cuenta activada con éxito.
+      properties:
+        mensaje:
+          example: Cuenta activada con éxito.
+          type: string
+      type: object
+    _auth_verify_post_400_response:
+      example:
+        error: Código inválido o expirado.
+      properties:
+        error:
+          example: Código inválido o expirado.
+          type: string
+      type: object
+    _auth_verify_post_404_response:
+      example:
+        error: Usuario no encontrado.
+      properties:
+        error:
+          example: Usuario no encontrado.
+          type: string
+      type: object
+    _auth_login_post_200_response_usuario:
+      example:
+        id: id
+        nombre: nombre
+        rol: rol
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        rol:
+          type: string
+      type: object
+    _auth_login_post_200_response:
+      example:
+        usuario:
+          id: id
+          nombre: nombre
+          rol: rol
+        token: token
+      properties:
+        token:
+          type: string
+        usuario:
+          $ref: '#/components/schemas/_auth_login_post_200_response_usuario'
+      type: object
+    _auth_login_post_401_response:
+      example:
+        error: Correo o contraseña incorrectos.
+      properties:
+        error:
+          example: Correo o contraseña incorrectos.
+          type: string
+      type: object
+    _auth_perfil_put_200_response:
+      example:
+        mensaje: Datos actualizados correctamente.
+      properties:
+        mensaje:
+          example: Datos actualizados correctamente.
+          type: string
+      type: object
+    _auth_perfil_put_400_response:
+      example:
+        error: No se puede actualizar el perfil con los datos proporcionados.
+      properties:
+        error:
+          example: No se puede actualizar el perfil con los datos proporcionados.
+          type: string
+      type: object
+    _auth_perfil_delete_200_response:
+      example:
+        mensaje: Cuenta eliminada correctamente.
+      properties:
+        mensaje:
+          example: Cuenta eliminada correctamente.
+          type: string
+      type: object
+    _auth_perfil_delete_400_response:
+      example:
+        error: Debes confirmar la eliminación de tu cuenta.
+      properties:
+        error:
+          example: Debes confirmar la eliminación de tu cuenta.
+          type: string
+      type: object
+    _auth_perfil_delete_401_response:
+      example:
+        error: No tienes permiso para eliminar esta cuenta.
+      properties:
+        error:
+          example: No tienes permiso para eliminar esta cuenta.
+          type: string
+      type: object
+    _auth_perfil_delete_500_response:
+      example:
+        error: Ocurrió un error inesperado. Inténtelo más tarde.
+      properties:
+        error:
+          example: Ocurrió un error inesperado. Inténtelo más tarde.
+          type: string
+      type: object
+    _reportes_get_500_response:
+      example:
+        error: Error inesperado en el servidor.
+      properties:
+        error:
+          example: Error inesperado en el servidor.
+          type: string
+      type: object
+    _reportes_post_201_response:
+      example:
+        id: id
+        mensaje: Reporte creado y pendiente de verificación.
+      properties:
+        id:
+          type: string
+        mensaje:
+          example: Reporte creado y pendiente de verificación.
+          type: string
+      type: object
+    _reportes_post_400_response:
+      example:
+        error: Faltan datos obligatorios en el reporte.
+      properties:
+        error:
+          example: Faltan datos obligatorios en el reporte.
+          type: string
+      type: object
+    _reportes_post_500_response:
+      example:
+        error: Error inesperado en el servidor. Inténtelo más tarde.
+      properties:
+        error:
+          example: Error inesperado en el servidor. Inténtelo más tarde.
+          type: string
+      type: object
+    _reportes__id__put_200_response:
+      example:
+        mensaje: Reporte actualizado correctamente.
+      properties:
+        mensaje:
+          example: Reporte actualizado correctamente.
+          type: string
+      type: object
+    _reportes__id__put_400_response:
+      example:
+        error: Los datos proporcionados no son válidos.
+      properties:
+        error:
+          example: Los datos proporcionados no son válidos.
+          type: string
+      type: object
+    _reportes__id__put_404_response:
+      example:
+        error: Reporte no encontrado.
+      properties:
+        error:
+          example: Reporte no encontrado.
+          type: string
+      type: object
+    _reportes__id__delete_200_response:
+      example:
+        mensaje: Reporte eliminado correctamente.
+      properties:
+        mensaje:
+          example: Reporte eliminado correctamente.
+          type: string
+      type: object
+    _reportes__id__delete_400_response:
+      example:
+        error: Debes confirmar la eliminación.
+      properties:
+        error:
+          example: Debes confirmar la eliminación.
+          type: string
+      type: object
+    _reportes__id__comentarios_post_201_response:
+      example:
+        id: id
+        mensaje: Comentario agregado correctamente.
+      properties:
+        id:
+          type: string
+        mensaje:
+          example: Comentario agregado correctamente.
+          type: string
+      type: object
+    _reportes__id__comentarios_post_400_response:
+      example:
+        error: El comentario no puede estar vacío.
+      properties:
+        error:
+          example: El comentario no puede estar vacío.
+          type: string
+      type: object
+    _reportes__id__comentarios__comentarioId__delete_200_response:
+      example:
+        mensaje: Comentario eliminado correctamente.
+      properties:
+        mensaje:
+          example: Comentario eliminado correctamente.
+          type: string
+      type: object
+    _reportes__id__comentarios__comentarioId__delete_403_response:
+      example:
+        error: No tienes permiso para eliminar este comentario.
+      properties:
+        error:
+          example: No tienes permiso para eliminar este comentario.
+          type: string
+      type: object
+    _reportes__id__comentarios__comentarioId__delete_404_response:
+      example:
+        error: Comentario no encontrado.
+      properties:
+        error:
+          example: Comentario no encontrado.
+          type: string
+      type: object
+    _admin_perfil_put_200_response:
+      example:
+        mensaje: Perfil de administrador actualizado correctamente.
+      properties:
+        mensaje:
+          example: Perfil de administrador actualizado correctamente.
+          type: string
+      type: object
+    _admin_perfil_put_401_response:
+      example:
+        error: No tienes permisos para editar este perfil.
+      properties:
+        error:
+          example: No tienes permisos para editar este perfil.
+          type: string
+      type: object
+    _admin_perfil_put_404_response:
+      example:
+        error: Administrador no encontrado.
+      properties:
+        error:
+          example: Administrador no encontrado.
+          type: string
+      type: object
+    _admin_categorias_post_201_response:
+      example:
+        id: id
+        mensaje: Categoria creada con exito
+      properties:
+        id:
+          type: string
+        mensaje:
+          example: Categoria creada con exito
+          type: string
+      type: object
+    _admin_categorias_post_400_response:
+      example:
+        error: Faltan datos necesarios para la categoria
+      properties:
+        error:
+          example: Faltan datos necesarios para la categoria
+          type: string
+      type: object
+    _admin_categorias__id__put_200_response:
+      example:
+        mensaje: Categoría editada correctamente.
+      properties:
+        mensaje:
+          example: Categoría editada correctamente.
+          type: string
+      type: object
+    _admin_categorias__id__put_404_response:
+      example:
+        error: Categoría no encontrada.
+      properties:
+        error:
+          example: Categoría no encontrada.
+          type: string
+      type: object
+    _admin_categorias__id__delete_200_response:
+      example:
+        mensaje: Categoría eliminada correctamente.
+      properties:
+        mensaje:
+          example: Categoría eliminada correctamente.
+          type: string
+      type: object
+    _admin_categorias__id__delete_400_response:
+      example:
+        error: No se puede eliminar la categoría porque tiene reportes asociados.
+      properties:
+        error:
+          example: No se puede eliminar la categoría porque tiene reportes asociados.
+          type: string
+      type: object
+    _notificaciones_get_401_response:
+      example:
+        error: Debes iniciar sesión para ver tus notificaciones.
+      properties:
+        error:
+          example: Debes iniciar sesión para ver tus notificaciones.
+          type: string
+      type: object
+    _notificaciones_get_500_response:
+      example:
+        error: Error inesperado al obtener las notificaciones.
+      properties:
+        error:
+          example: Error inesperado al obtener las notificaciones.
+          type: string
+      type: object
+    _notificaciones_post_200_response:
+      example:
+        mensaje: Notificaciones enviadas correctamente.
+      properties:
+        mensaje:
+          example: Notificaciones enviadas correctamente.
+          type: string
+      type: object
+    _notificaciones_post_400_response:
+      example:
+        error: Faltan datos en la notificación.
+      properties:
+        error:
+          example: Faltan datos en la notificación.
+          type: string
+      type: object
+    _notificaciones_post_500_response:
+      example:
+        error: Error inesperado al enviar las notificaciones.
+      properties:
+        error:
+          example: Error inesperado al enviar las notificaciones.
+          type: string
+      type: object
+    UsuarioRegistro_ubicacion:
+      example:
+        latitud: 0.8008281904610115
+        longitud: 6.027456183070403
+      properties:
+        latitud:
+          format: double
+          type: number
+        longitud:
+          format: double
+          type: number
+      type: object
