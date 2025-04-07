@@ -1,0 +1,1118 @@
+openapi: 3.0.0
+info:
+  title: Plataforma de Reportes de Seguridad
+  description: API para reportar incidentes ciudadanos en tiempo real.
+  version: 1.0.0
+servers:
+  - url: https://api.reportes-ciudad.com/v1
+    description: Servidor de producción
+  - url: http://localhost:8080
+    description: Servidor local para desarrollo
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - user
+      summary: Registro de usuario
+      description: Registra un nuevo usuario en la plataforma.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UsuarioRegistro"
+      responses:
+        "201":
+          description: Usuario registrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Usuario registrado con éxito. Verifique su correo electrónico."
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "El correo ya está registrado."
+
+  /auth/verify:
+    post:
+      tags:
+        - user
+      summary: Verificación de cuenta
+      description: Permite a un usuario verificar su cuenta con el código enviado por correo electrónico.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/verificarCodigo"
+      responses:
+        "200":
+          description: Cuenta verificada con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Cuenta activada con éxito."
+        "400":
+          description: Código incorrecto o expirado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Código inválido o expirado."
+        "404":
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Usuario no encontrado."
+
+  /auth/login:
+    post:
+      tags:
+        - user
+        - admin
+      summary: Inicio de sesión
+      description: Permite a un usuario autenticarse en la plataforma.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: Inicio de sesión exitoso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  usuario:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      nombre:
+                        type: string
+                      rol:
+                        type: string
+        "401":
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Correo o contraseña incorrectos."
+
+  /auth/perfil:
+    put:
+      tags:
+        - user
+      summary: Editar perfil del usuario
+      description: Permite al usuario modificar su información personal, incluyendo nombre, ubicación, correo y contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UsuarioEditar"
+      responses:
+        "200":
+          description: Datos actualizados correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Datos actualizados correctamente."
+        "400":
+          description: Error en la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "No se puede actualizar el perfil con los datos proporcionados."
+
+
+    delete:
+      tags:
+        - user
+        - admin
+      summary: Eliminar perfil de usuario
+      description: Permite a un usuario eliminar su cuenta de la plataforma.
+      parameters:
+        - name: confirmar
+          in: query
+          required: true
+          schema:
+            type: boolean
+          description: "Debe enviarse como 'true' para confirmar la eliminación."
+      responses:
+        "200":
+          description: Perfil eliminado con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Cuenta eliminada correctamente."
+        "400":
+          description: Falta confirmación para eliminar la cuenta.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Debes confirmar la eliminación de tu cuenta."
+        "401":
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "No tienes permiso para eliminar esta cuenta."
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Ocurrió un error inesperado. Inténtelo más tarde."
+
+
+  /reportes:
+    post:
+      tags:
+        - report
+      summary: Crear un reporte
+      description: Permite a un usuario reportar un incidente.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Reporte"
+      responses:
+        "201":
+          description: Reporte creado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  mensaje:
+                    type: string
+                    example: "Reporte creado y pendiente de verificación."
+        "400":
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Faltan datos obligatorios en el reporte."
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error inesperado en el servidor. Inténtelo más tarde."
+
+    get:
+      tags:
+        - report
+      summary: Obtener todos los reportes
+      description: Devuelve la lista de reportes registrados en el sistema.
+      parameters:
+        - name: categoria
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: estado
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de reportes obtenida con éxito
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Reporte"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error inesperado en el servidor."
+
+  /reportes/{id}:
+    put:
+      tags:
+        - report
+      summary: Editar un reporte
+      description: Permite modificar un reporte existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReporteEditar"
+      responses:
+        "200":
+          description: Reporte actualizado con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Reporte actualizado correctamente."
+        "400":
+          description: Datos inválidos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Los datos proporcionados no son válidos."
+        "404":
+          description: Reporte no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Reporte no encontrado."
+
+
+    delete:
+      tags:
+        - report
+      summary: Eliminar un reporte
+      description: Permite eliminar un reporte por su ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Reporte eliminado con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Reporte eliminado correctamente."
+        "400":
+          description: Falta confirmación para eliminar el reporte.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Debes confirmar la eliminación."
+        "404":
+          description: Reporte no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Reporte no encontrado."
+
+  /reportes/{id}/comentarios:
+    post:
+      tags:
+        - report
+      summary: Agregar un comentario a un reporte
+      description: Permite a los usuarios agregar comentarios en un reporte existente.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Comentario"
+      responses:
+        "201":
+          description: Comentario agregado con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  mensaje:
+                    type: string
+                    example: "Comentario agregado correctamente."
+        "400":
+          description: Datos inválidos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "El comentario no puede estar vacío."
+        "404":
+          description: Reporte no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Reporte no encontrado."
+
+    get:
+      tags:
+        - report
+      summary: Obtener comentarios de un reporte
+      description: Devuelve la lista de comentarios asociados a un reporte.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lista de comentarios obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comentario"
+        "404":
+          description: Reporte no encontrado.
+
+  /reportes/{id}/comentarios/{comentarioId}:
+    put:
+      tags:
+        - report
+      summary: Editar un comentario
+      description: Permite a un usuario modificar su comentario en un reporte.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: comentarioId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComentarioEditar"
+      responses:
+        "200":
+          description: Comentario actualizado con éxito.
+        "403":
+          description: No autorizado para editar este comentario.
+        "404":
+          description: Comentario no encontrado.
+
+    delete:
+      tags:
+        - report
+      summary: Eliminar un comentario
+      description: Permite a un usuario eliminar su comentario o a un administrador eliminar cualquier comentario.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "ID del reporte donde está el comentario."
+        - name: comentarioId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: "ID del comentario a eliminar."
+      responses:
+        "200":
+          description: Comentario eliminado con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Comentario eliminado correctamente."
+        "403":
+          description: No autorizado para eliminar el comentario.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "No tienes permiso para eliminar este comentario."
+        "404":
+          description: Comentario no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Comentario no encontrado."
+
+
+  /admin/perfil:
+    put:
+      tags:
+        - admin
+      summary: Editar perfil del administrador
+      description: Permite a un administrador modificar su nombre, correo y contraseña.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminEditar"
+      responses:
+        "200":
+          description: Perfil de administrador actualizado con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Perfil de administrador actualizado correctamente."
+        "400":
+          description: Datos inválidos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Los datos proporcionados no son válidos."
+        "401":
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "No tienes permisos para editar este perfil."
+        "404":
+          description: Administrador no encontrado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Administrador no encontrado."
+
+  /admin/categorias:
+    post:
+      tags:
+        - admin
+      summary: Crear una categoria
+      description: Permite al administrador crear una categoria de reporte
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Categoria"
+      responses:
+        "201":
+          description: Reporte creado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  mensaje:
+                    type: string
+                    example: "Categoria creada con exito"
+        "400":
+          description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Faltan datos necesarios para la categoria"
+        "500":
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error inesperado en el servidor. Inténtelo más tarde."
+
+  /admin/categorias/{id}:
+    put:
+      tags:
+        - admin
+      summary: Editar una categoría
+      description: Permite modificar el nombre y la descripción de una categoría.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CategoriaEditar"
+      responses:
+        "200":
+          description: Categoría actualizada con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Categoría editada correctamente."
+        "400":
+          description: Datos inválidos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Los datos proporcionados no son válidos."
+        "404":
+          description: Categoría no encontrada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Categoría no encontrada."
+
+    delete:
+      tags:
+        - admin
+      summary: Eliminar una categoría
+      description: Permite eliminar una categoría por su ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Categoría eliminada con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Categoría eliminada correctamente."
+        "400":
+          description: No se puede eliminar la categoría.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "No se puede eliminar la categoría porque tiene reportes asociados."
+        "404":
+          description: Categoría no encontrada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Categoría no encontrada."
+
+  /notificaciones:
+    post:
+      tags:
+        - notifications
+      summary: Enviar notificación a usuarios cercanos
+      description: Envía una notificación a usuarios que se encuentran cerca del reporte.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Notificacion"
+      responses:
+        "200":
+          description: Notificación enviada con éxito.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mensaje:
+                    type: string
+                    example: "Notificaciones enviadas correctamente."
+        "400":
+          description: Datos inválidos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Faltan datos en la notificación."
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error inesperado al enviar las notificaciones."
+
+    get:
+      tags:
+        - notifications
+      summary: Obtener notificaciones del usuario
+      description: Permite a un usuario ver todas sus notificaciones recibidas.
+      responses:
+        "200":
+          description: Lista de notificaciones obtenida con éxito.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notificacion"
+        "401":
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Debes iniciar sesión para ver tus notificaciones."
+        "500":
+          description: Error interno del servidor.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error inesperado al obtener las notificaciones."
+
+  /notificaciones/{id}/leer:
+    put:
+      tags:
+        - notifications
+      summary: Marcar notificación como leída
+      description: Permite a un usuario marcar una notificación como leída.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notificación marcada como leída.
+        "404":
+          description: Notificación no encontrada.
+
+  /notificaciones/{id}:
+    get:
+      tags:
+        - notifications
+      summary: Obtener detalles de una notificación
+      description: Devuelve la información completa de una notificación específica.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Notificación encontrada.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notificacion"
+        "404":
+          description: Notificación no encontrada.
+
+
+
+components:
+  schemas:
+    UsuarioRegistro:
+      type: object
+      required:
+        - id
+        - nombre
+        - ciudadResidencia
+        - telefono
+        - direccion
+        - correo
+        - contraseña
+        - ubicacion
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+        ciudadResidencia:
+          type: string
+        telefono:
+          type: string
+        direccion:
+          type: string
+        correo:
+          type: string
+          format: email
+        contraseña:
+          type: string
+          format: password
+        ubicacion:
+          type: object
+          properties:
+            latitud:
+              type: number
+              format: double
+            longitud:
+              type: number
+              format: double
+
+    verificarCodigo:
+      type: object
+      required:
+        - correo
+        - codigo
+      properties:
+        correo:
+          type: string
+          format: email
+          example: "usuario@email.com"
+        codigo:
+          type: string
+          example: "A1B2C3"
+
+    UsuarioEditar:
+      type: object
+      required:
+        - correo
+      properties:
+        nombre:
+          type: string
+        ciudadResidencia:
+          type: string
+        telefono:
+          type: string
+        direccion:
+          type: string
+        correo:
+          type: string
+          format: email
+        contraseña:
+          type: string
+          format: password
+        ubicacion:
+          type: object
+          properties:
+            latitud:
+              type: number
+              format: double
+            longitud:
+              type: number
+              format: double
+
+    Login:
+      type: object
+      required:
+        - correo
+        - contraseña
+      properties:
+        correo:
+          type: string
+          format: email
+        contraseña:
+          type: string
+          format: password
+
+    Reporte:
+      type: object
+      required:
+        - titulo
+        - categoria
+        - descripcion
+        - ubicacion
+      properties:
+        id:
+          type: string
+        titulo:
+          type: string
+        categoria:
+          type: string
+        descripcion:
+          type: string
+        ubicacion:
+          type: object
+          properties:
+            latitud:
+              type: number
+              format: double
+            longitud:
+              type: number
+              format: double
+        imagenes:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    ReporteEditar:
+      type: object
+      properties:
+        titulo:
+          type: string
+        categoria:
+          type: string
+        descripcion:
+          type: string
+        ubicacion:
+          type: object
+          properties:
+            latitud:
+              type: number
+              format: double
+            longitud:
+              type: number
+              format: double
+        imagenes:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    Categoria:
+      type: object
+      required:
+        - nombre
+        - descripcion
+      properties:
+        id:
+          type: string
+        nombre:
+          type: string
+          example: "Emergencias Médicas"
+        descripcion:
+          type: string
+          example: "Reportes de accidentes de tránsito, problemas de salud en la vía pública, etc."
+
+    CategoriaEditar:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: "Emergencias y Desastres"
+        descripcion:
+          type: string
+          example: "Reportes de terremotos, incendios, y otras emergencias."
+
+    Comentario:
+      type: object
+      required:
+        - usuarioId
+        - contenido
+      properties:
+        usuarioId:
+          type: string
+          example: "123"
+        contenido:
+          type: string
+          example: "Este incidente también afectó mi zona."
+        fecha:
+          type: string
+          format: date-time
+          example: "2024-03-10T14:30:00Z"
+
+    ComentarioEditar:
+      type: object
+      required:
+        - contenido
+      properties:
+        contenido:
+          type: string
+          example: "He actualizado mi comentario sobre este incidente."
+
+
+    Notificacion:
+      type: object
+      required:
+        - usuarioId
+        - reporteId
+        - mensaje
+        - fecha
+      properties:
+        usuarioId:
+          type: string
+          example: "abc123"
+        reporteId:
+          type: string
+          example: "reporte567"
+        mensaje:
+          type: string
+          example: "Nuevo reporte de accidente cercano a tu ubicación."
+        fecha:
+          type: string
+          format: date-time
+          example: "2024-03-10T14:30:00Z"
+        enlaceReporte:
+          type: string
+          format: uri
+          example: "https://miapp.com/reportes/reporte567"
+
+    AdminEditar:
+      type: object
+      required:
+        - nombre
+        - correo
+        - contraseña
+      properties:
+        nombre:
+          type: string
+          example: "Administrador Principal"
+        correo:
+          type: string
+          format: email
+          example: "admin@empresa.com"
+        contraseña:
+          type: string
+          format: password
+          example: "NuevaClaveSegura123"
