@@ -2,6 +2,7 @@ package org.uniquindio.proyectofinalavanzada.dtos;
 
 import jakarta.validation.constraints.*;
 import org.uniquindio.proyectofinalavanzada.domain.Ubicacion;
+import org.uniquindio.proyectofinalavanzada.domain.UsuarioEstado;
 
 public record UsuarioRegistroDTO(
         @NotBlank String id,

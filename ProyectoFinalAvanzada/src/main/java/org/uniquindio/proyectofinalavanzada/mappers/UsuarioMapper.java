@@ -14,6 +14,7 @@ public interface UsuarioMapper {
     @Mapping(target = "id", expression = "java(generateId())")
     @Mapping(target = "rol", constant = "USER")
     @Mapping(target = "verificado", constant = "false")
+    @Mapping(target = "estado", constant = "REGISTRADO")
     Usuario toUsuario(UsuarioRegistroDTO dto);
 
     UsuarioResponseDTO toUsuarioResponseDTO(Usuario usuario);

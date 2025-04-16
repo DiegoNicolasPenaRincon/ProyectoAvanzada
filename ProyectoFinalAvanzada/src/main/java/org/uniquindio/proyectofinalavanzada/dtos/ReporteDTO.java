@@ -7,8 +7,10 @@ import java.util.List;
 
 public record ReporteDTO(
         @NotBlank String titulo,
-        @NotBlank String categoria,
+        @NotNull List<String> categorias,
         @NotBlank String descripcion,
-        @NotNull Ubicacion ubicacion,
-        List<String> imagenes
+        @NotNull Double latitud,
+        @NotNull Double longitud,
+        List<String> imagenes,
+        @NotBlank String usuarioId
 ) {}
