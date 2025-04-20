@@ -6,4 +6,5 @@ import org.uniquindio.proyectofinalavanzada.domain.Categoria;
 
 @Repository
 public interface CategoriaRepository extends MongoRepository<Categoria, String> {
+
 }

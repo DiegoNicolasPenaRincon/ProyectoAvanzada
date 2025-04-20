@@ -47,7 +47,7 @@ public class ComentarioController {
             @PathVariable String id,
             @PathVariable String comentarioId) throws Exception {
 
-        comentarioService.eliminarComentario(id, comentarioId);
+        comentarioService.eliminarComentario(comentarioId);
         return ResponseEntity.ok(new MensajeDTO("Comentario eliminado correctamente."));
     }
 }
