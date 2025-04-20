@@ -7,6 +7,7 @@ import org.uniquindio.proyectofinalavanzada.dtos.*;
 import org.uniquindio.proyectofinalavanzada.exception.ResourceNotFoundException;
 import org.uniquindio.proyectofinalavanzada.exception.ValueConflictException;
 import org.uniquindio.proyectofinalavanzada.mappers.UsuarioMapper;
+import org.uniquindio.proyectofinalavanzada.repositories.UsuarioRepository;
 import org.uniquindio.proyectofinalavanzada.services.UsuarioService;
 
 import java.util.*;
@@ -16,9 +17,84 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
+    private final UsuarioRepository usuarioRepository;
     private final Map<String, Usuario> usuarioStore = new ConcurrentHashMap<>();
     private final UsuarioMapper usuarioMapper;
 
+    @Override
+    public UsuarioResponseDTO registrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO) throws Exception {
+        if (usuarioRepository.existsByCorreoIgnoreCase(usuarioRegistroDTO.correo())) {
+            throw new ValueConflictException("El correo ya está registrado");
+        }
+
+        Usuario usuario = usuarioMapper.toUsuario(usuarioRegistroDTO);
+        usuario.setVerificado(false); // Asegura que no esté verificado por defecto
+        usuario = usuarioRepository.save(usuario);
+
+        return usuarioMapper.toUsuarioResponseDTO(usuario);
+    }
+
+    @Override
+    public UsuarioResponseDTO verificarCuenta(VerificarCodigoDTO verificarCodigoDTO) throws Exception {
+        Usuario usuario = usuarioRepository.findByCorreoIgnoreCase(verificarCodigoDTO.correo())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        usuario.setVerificado(true);
+        usuario = usuarioRepository.save(usuario);
+
+        return usuarioMapper.toUsuarioResponseDTO(usuario);
+    }
+
+    @Override
+    public LoginResponseDTO login(LoginDTO loginDTO) throws Exception {
+        Usuario usuario = usuarioRepository.findByCorreoIgnoreCaseAndContraseña(
+                        loginDTO.correo(), loginDTO.contraseña())
+                .orElseThrow(() -> new ResourceNotFoundException("Correo o contraseña incorrectos"));
+
+        if (!usuario.isVerificado()) {
+            throw new ValueConflictException("La cuenta no ha sido verificada");
+        }
+
+        return new LoginResponseDTO("token-simulado", usuarioMapper.toUsuarioResponseDTO(usuario));
+    }
+
+    @Override
+    public UsuarioResponseDTO editarPerfil(String id, UsuarioEditarDTO usuarioEditarDTO) throws Exception {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        if (usuarioEditarDTO.nombre() != null) usuario.setNombre(usuarioEditarDTO.nombre());
+        if (usuarioEditarDTO.ciudadResidencia() != null) usuario.setCiudadResidencia(usuarioEditarDTO.ciudadResidencia());
+        if (usuarioEditarDTO.telefono() != null) usuario.setTelefono(usuarioEditarDTO.telefono());
+        if (usuarioEditarDTO.direccion() != null) usuario.setDireccion(usuarioEditarDTO.direccion());
+        if (usuarioEditarDTO.correo() != null) usuario.setCorreo(usuarioEditarDTO.correo());
+        if (usuarioEditarDTO.contraseña() != null) usuario.setContraseña(usuarioEditarDTO.contraseña());
+        if (usuarioEditarDTO.ubicacion() != null) usuario.setUbicacion(usuarioEditarDTO.ubicacion());
+
+        usuario = usuarioRepository.save(usuario);
+
+        return usuarioMapper.toUsuarioResponseDTO(usuario);
+    }
+
+    @Override
+    public void eliminarPerfil(String id, boolean confirmar) throws Exception {
+        if (!confirmar) {
+            throw new ValueConflictException("Debes confirmar la eliminación de tu cuenta");
+        }
+
+        if (!usuarioRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Usuario no encontrado");
+        }
+
+        usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public Optional<UsuarioResponseDTO> obtenerUsuario(String id) {
+        return usuarioRepository.findById(id)
+                .map(usuarioMapper::toUsuarioResponseDTO);
+    }
+    /*
     @Override
     public UsuarioResponseDTO registrarUsuario(UsuarioRegistroDTO usuarioRegistroDTO) throws Exception {
         if (usuarioStore.values().stream().anyMatch(u -> u.getCorreo().equalsIgnoreCase(usuarioRegistroDTO.correo()))) {
@@ -96,4 +172,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         return Optional.ofNullable(usuarioStore.get(id))
                 .map(usuarioMapper::toUsuarioResponseDTO);
     }
+
+     */
 }
