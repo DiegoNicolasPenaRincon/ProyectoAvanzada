@@ -1,7 +1,7 @@
 package org.uniquindio.proyectofinalavanzada.dtos;
 
 import jakarta.validation.constraints.*;
-import org.uniquindio.proyectofinalavanzada.domain.Ubicacion;
+import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
 
 import java.util.List;
 

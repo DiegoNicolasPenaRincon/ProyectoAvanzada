@@ -1,6 +1,7 @@
 package org.uniquindio.proyectofinalavanzada.services;
 
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.uniquindio.proyectofinalavanzada.domain.Comentario;
 import org.uniquindio.proyectofinalavanzada.dtos.ComentarioDTO;
@@ -22,7 +23,8 @@ public class ComentarioServiceImpl implements ComentarioService {
     @Override
     public ComentarioResponseDTO agregarComentario(String reporteId, ComentarioDTO comentarioDTO) throws Exception {
         Comentario comentario = comentarioMapper.toComentario(comentarioDTO);
-        comentario.setReporteId(reporteId);
+        ObjectId casteoAObjectId=new ObjectId(reporteId);
+        comentario.setReporteId(casteoAObjectId);
         comentarioStore.put(comentario.getId(), comentario);
         return comentarioMapper.toComentarioResponseDTO(comentario);
     }

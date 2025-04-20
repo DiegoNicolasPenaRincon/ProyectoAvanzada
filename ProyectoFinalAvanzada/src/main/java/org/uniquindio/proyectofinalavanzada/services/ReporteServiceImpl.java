@@ -45,7 +45,7 @@ public class ReporteServiceImpl implements ReporteService {
         }
 
         if (reporteDTO.titulo() != null) reporte.setTitulo(reporteDTO.titulo());
-        if (reporteDTO.categoria() != null) reporte.setCategoria(reporteDTO.categoria());
+        if (reporteDTO.categorias() != null) reporte.getCategorias().addAll(reporteDTO.categorias());
         if (reporteDTO.descripcion() != null) reporte.setDescripcion(reporteDTO.descripcion());
         if (reporteDTO.ubicacion() != null) reporte.setUbicacion(reporteDTO.ubicacion());
         if (reporteDTO.imagenes() != null) reporte.setImagenes(reporteDTO.imagenes());

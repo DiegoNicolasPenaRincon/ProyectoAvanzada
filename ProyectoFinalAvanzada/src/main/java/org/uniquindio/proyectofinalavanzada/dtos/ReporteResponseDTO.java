@@ -1,6 +1,7 @@
 package org.uniquindio.proyectofinalavanzada.dtos;
 
-import org.uniquindio.proyectofinalavanzada.domain.Ubicacion;
+import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
+import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ public record ReporteResponseDTO(
         String titulo,
         String categoria,
         String descripcion,
-        Ubicacion ubicacion,
+        GeoPoint ubicacion,
         List<String> imagenes,
         String estado
 ) {}
