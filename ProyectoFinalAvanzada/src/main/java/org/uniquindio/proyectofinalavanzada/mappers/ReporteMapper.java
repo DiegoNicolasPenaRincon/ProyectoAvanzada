@@ -11,10 +11,17 @@ import java.util.UUID;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ReporteMapper {
-    @Mapping(target = "id", expression = "java(generateId())")
-    @Mapping(target = "estado", constant = "PENDIENTE")
+
+    @Mapping(target = "titulo", expression = "java(reporte.getTitulo())")
+    @Mapping(target = "categorias", expression = "java(reporte.getCategorias())")
+    @Mapping(target = "descripcion", expression = "java(reporte.getDescripcion())")
+    @Mapping(target = "ubicacion", expression = "java(reporte.getUbicacion())")
+    @Mapping(target = "imagenes", expression = "java(reporte.getImagenes())")
+    @Mapping(target = "usuarioId", expression = "java(reporte.getUsuarioId())")
     Reporte toReporte(ReporteDTO dto);
 
+    @Mapping(target = "id", expression = "java(generateId())")
+    @Mapping(target = "estado", constant = "PENDIENTE")
     ReporteResponseDTO toReporteResponseDTO(Reporte reporte);
 
     default String generateId() {

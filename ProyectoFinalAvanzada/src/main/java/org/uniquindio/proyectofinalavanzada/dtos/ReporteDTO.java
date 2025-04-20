@@ -1,14 +1,19 @@
 package org.uniquindio.proyectofinalavanzada.dtos;
 
 import jakarta.validation.constraints.*;
-import org.uniquindio.proyectofinalavanzada.domain.Ubicacion;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.uniquindio.proyectofinalavanzada.domain.Categoria;
+import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
 
 import java.util.List;
 
 public record ReporteDTO(
         @NotBlank String titulo,
-        @NotBlank String categoria,
+        @NotNull List<Categoria> categorias,
         @NotBlank String descripcion,
-        @NotNull Ubicacion ubicacion,
-        List<String> imagenes
+        //@NotNull Double latitud,
+       // @NotNull Double longitud,
+        @NotNull GeoJsonPoint ubicacion,
+        List<String> imagenes,
+        @NotBlank String usuarioId
 ) {}

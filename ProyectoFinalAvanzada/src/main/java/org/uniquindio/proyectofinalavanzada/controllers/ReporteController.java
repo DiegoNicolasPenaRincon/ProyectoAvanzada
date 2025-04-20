@@ -1,9 +1,11 @@
 package org.uniquindio.proyectofinalavanzada.controllers;
 
+import org.uniquindio.proyectofinalavanzada.repositories.ReporteRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.uniquindio.proyectofinalavanzada.domain.Reporte;
 import org.uniquindio.proyectofinalavanzada.dtos.*;
 import org.uniquindio.proyectofinalavanzada.services.ReporteService;
 
@@ -16,12 +18,21 @@ import java.util.List;
 public class ReporteController {
 
     private final ReporteService reporteService;
-
+    private final ReporteRepository reporteRepository;
+/*
     @PostMapping
     public ResponseEntity<ReporteResponseDTO> crearReporte(@Valid @RequestBody ReporteDTO reporteDTO) throws Exception {
         ReporteResponseDTO response = reporteService.crearReporte(reporteDTO);
         return ResponseEntity.created(URI.create("/api/reportes/" + response.id()))
                 .body(response);
+    }
+
+
+ */
+
+    @PostMapping
+    public ResponseEntity<Reporte> crearReporte(@RequestBody Reporte reporte) {
+        return ResponseEntity.ok(reporteRepository.save(reporte));
     }
 
     @GetMapping
