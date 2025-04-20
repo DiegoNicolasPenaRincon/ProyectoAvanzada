@@ -21,7 +21,6 @@ public interface ComentarioMapper {
     @Mapping(target = "id", expression = "java(toString(comentario.getUsuarioId()))")
     @Mapping(target = "fecha", expression = "java(getCurrentDateTimeString() )")
     @Mapping(target = "usuarioId", expression = "java(toString(comentario.getReporteId()))")
-    @Mapping(target = "contenido", expression = "java(")
     ComentarioResponseDTO toComentarioResponseDTO(Comentario comentario);
 
     default String generateId() {
