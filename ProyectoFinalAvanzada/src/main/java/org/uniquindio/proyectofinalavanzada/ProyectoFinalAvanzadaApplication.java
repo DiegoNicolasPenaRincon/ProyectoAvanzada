@@ -26,8 +26,6 @@ public class ProyectoFinalAvanzadaApplication {
     public static void main(String[] args) {
         SpringApplication.run(ProyectoFinalAvanzadaApplication.class, args);
 
-        Comentario comentario=new Comentario();
-        comentario.getUsuarioId();
     }
 
 }
