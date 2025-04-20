@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Ubicacion {
+public class GeoPoint {
     @Field("type")
     private String type = "Point"; // Requerido por GeoJSON
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)

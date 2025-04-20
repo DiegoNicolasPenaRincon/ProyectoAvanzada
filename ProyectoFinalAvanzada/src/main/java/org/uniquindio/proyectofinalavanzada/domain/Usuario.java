@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Document("usuarios")
+@Document(collection= "usuarios")
 public class Usuario {
 
     @Id

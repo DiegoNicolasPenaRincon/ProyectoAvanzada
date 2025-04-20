@@ -26,6 +26,7 @@ public class Categoria {
     @Field("nombre")
     @NotBlank
     @Size(min = 2, max = 50)
+    @Indexed
     private String nombre;
 
     @Field("descripcion")

@@ -25,7 +25,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Document("reportes")
+@Document(collection="reportes")
 public class Reporte {
 
     @Id
