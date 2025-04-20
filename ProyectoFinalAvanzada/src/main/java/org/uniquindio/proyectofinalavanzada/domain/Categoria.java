@@ -18,15 +18,15 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document("categorias")
 public class Categoria {
 
-    @Id
     @Indexed(unique = true)
-    @EqualsAndHashCode.Include
     private String id;
 
     @Field("nombre")
     @NotBlank
     @Size(min = 2, max = 50)
     @Indexed
+    @Id
+    @EqualsAndHashCode.Include
     private String nombre;
 
     @Field("descripcion")
