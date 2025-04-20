@@ -14,15 +14,14 @@ import java.util.UUID;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ComentarioMapper {
 
-    @Mapping(target = "usuarioId", expression = "java(generateId())")
-    @Mapping(target = "reporteId", expression = "java(generateId())")
-    @Mapping(target ="contenido", expression = "java(toString(comentario.getContenido()))")
+    @Mapping(target = "usuarioId", expression = "java(generateIdObject())")
+    @Mapping(target = "reporteId", expression = "java(generateIdObject())")
     Comentario toComentario(ComentarioDTO dto);
 
     @Mapping(target = "id", expression = "java(toString(comentario.getUsuarioId()))")
-    @Mapping(target = "fecha", expression = "java(getCurrentDateTime())")
+    @Mapping(target = "fecha", expression = "java(getCurrentDateTimeString() )")
     @Mapping(target = "usuarioId", expression = "java(toString(comentario.getReporteId()))")
-    @Mapping(target = "contenido", expression = "java(toObjectId(dto.contenido()))")
+    @Mapping(target = "contenido", expression = "java(")
     ComentarioResponseDTO toComentarioResponseDTO(Comentario comentario);
 
     default String generateId() {
@@ -33,12 +32,21 @@ public interface ComentarioMapper {
         return LocalDateTime.now();
     }
 
+    default String getCurrentDateTimeString() {
+        return String.valueOf(LocalDateTime.now());
+    }
+
     default ObjectId toObjectId(String id) {
         return id == null ? null : new ObjectId(id);
     }
 
     default String toString(ObjectId objectId) {
         return objectId == null ? null : objectId.toHexString();
+    }
+
+
+    default ObjectId generateIdObject() {
+        return new ObjectId();
     }
 
 
