@@ -1,5 +1,6 @@
 package org.uniquindio.proyectofinalavanzada.dtos;
 
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
 
 public record UsuarioEditarDTO(
@@ -9,5 +10,5 @@ public record UsuarioEditarDTO(
         String direccion,
         String correo,
         String contraseña,
-        GeoPoint ubicacion
+        GeoJsonPoint ubicacion
 ) {}

@@ -1,5 +1,6 @@
 package org.uniquindio.proyectofinalavanzada.dtos;
 
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
 import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
 
@@ -10,7 +11,7 @@ public record ReporteResponseDTO(
         String titulo,
         String categoria,
         String descripcion,
-        GeoPoint ubicacion,
+        GeoJsonPoint ubicacion,
         List<String> imagenes,
         String estado
 ) {}

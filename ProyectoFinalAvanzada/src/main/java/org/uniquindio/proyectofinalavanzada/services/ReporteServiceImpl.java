@@ -31,7 +31,7 @@ public class ReporteServiceImpl implements ReporteService {
     @Override
     public List<ReporteResponseDTO> listarReportes(String categoria, String estado) {
         return reporteStore.values().stream()
-                .filter(r -> categoria == null || r.getCategoria().equals(categoria))
+                .filter(r -> categoria == null || r.getCategorias().equals(categoria))
                 .filter(r -> estado == null || r.getEstado().equals(estado))
                 .map(reporteMapper::toReporteResponseDTO)
                 .collect(Collectors.toList());
