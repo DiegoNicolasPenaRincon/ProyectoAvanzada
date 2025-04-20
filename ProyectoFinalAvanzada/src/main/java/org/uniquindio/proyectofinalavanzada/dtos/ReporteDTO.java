@@ -9,8 +9,9 @@ public record ReporteDTO(
         @NotBlank String titulo,
         @NotNull List<String> categorias,
         @NotBlank String descripcion,
-        @NotNull Double latitud,
-        @NotNull Double longitud,
+        //@NotNull Double latitud,
+       // @NotNull Double longitud,
+        @NotNull GeoPoint ubicacion,
         List<String> imagenes,
         @NotBlank String usuarioId
 ) {}

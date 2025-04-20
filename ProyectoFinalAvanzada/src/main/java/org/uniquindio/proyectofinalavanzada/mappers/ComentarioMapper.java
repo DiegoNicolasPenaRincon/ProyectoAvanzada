@@ -13,14 +13,16 @@ import java.util.UUID;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ComentarioMapper {
-    @Mapping(target = "id", expression = "java(generateId())")
-    @Mapping(target = "fecha", expression = "java(getCurrentDateTime())")
-    @Mapping(target = "usuarioId", expression = "java(toObjectId(dto.usuarioId()))")
-    @Mapping(target = "reporteId", expression = "java(toObjectId(dto.reporteId()))")
-    Comentario toComentario(ComentarioDTO dto);
 
     @Mapping(target = "usuarioId", expression = "java(toString(comentario.getUsuarioId()))")
     @Mapping(target = "reporteId", expression = "java(toString(comentario.getReporteId()))")
+    @Mapping(target ="contenido", expression = "java(toString(comentario.getContedio()))")
+    Comentario toComentario(ComentarioDTO dto);
+
+    @Mapping(target = "id", expression = "java(generateId())")
+    @Mapping(target = "fecha", expression = "java(getCurrentDateTime())")
+    @Mapping(target = "usuarioId", expression = "java(toObjectId(dto.usuarioId()))")
+    @Mapping(target = "contenido", expression = "java(toObjectId(dto.reporteId()))")
     ComentarioResponseDTO toComentarioResponseDTO(Comentario comentario);
 
     default String generateId() {

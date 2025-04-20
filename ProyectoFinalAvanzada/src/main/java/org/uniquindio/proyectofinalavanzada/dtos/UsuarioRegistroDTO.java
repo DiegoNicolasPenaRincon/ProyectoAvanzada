@@ -1,7 +1,7 @@
 package org.uniquindio.proyectofinalavanzada.dtos;
 
 import jakarta.validation.constraints.*;
-import org.uniquindio.proyectofinalavanzada.domain.Ubicacion;
+import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
 import org.uniquindio.proyectofinalavanzada.domain.UsuarioEstado;
 
 public record UsuarioRegistroDTO(
@@ -12,5 +12,5 @@ public record UsuarioRegistroDTO(
         @NotBlank String direccion,
         @NotBlank @Email String correo,
         @NotBlank @Size(min = 8) String contraseña,
-        Ubicacion ubicacion
+        GeoPoint ubicacion
 ) {}

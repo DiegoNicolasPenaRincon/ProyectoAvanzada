@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -56,7 +57,7 @@ public class Usuario {
     private String contraseña;
 
     @Field("ubicacion")
-    private Ubicacion ubicacion;
+    private GeoJsonPoint ubicacion;
 
     @Field("rol")
     @NotNull

@@ -1,6 +1,6 @@
 package org.uniquindio.proyectofinalavanzada.dtos;
 
-import org.uniquindio.proyectofinalavanzada.domain.Ubicacion;
+import org.uniquindio.proyectofinalavanzada.domain.GeoPoint;
 
 public record UsuarioEditarDTO(
         String nombre,
@@ -9,5 +9,5 @@ public record UsuarioEditarDTO(
         String direccion,
         String correo,
         String contraseña,
-        Ubicacion ubicacion
+        GeoPoint ubicacion
 ) {}
