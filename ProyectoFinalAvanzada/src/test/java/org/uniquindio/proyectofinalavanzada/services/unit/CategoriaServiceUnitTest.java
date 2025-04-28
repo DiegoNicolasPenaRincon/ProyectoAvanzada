@@ -79,7 +79,7 @@ class CategoriaServiceUnitTest {
         assertNotNull(result);
         assertEquals("Electrónica", result.nombre());
     }
-    
+
  */
 
     @Test
