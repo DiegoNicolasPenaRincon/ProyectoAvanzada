@@ -71,6 +71,18 @@ public class Usuario {
     @NotNull
     private UsuarioEstado estado;
 
-    public Usuario(String string, String usuario, String encode, String usuario1, LocalDate of, Rol rol, UsuarioEstado usuarioEstado) {
+
+
+    public Usuario(String id, String correo, String contraseña, String nombre, Rol rol, UsuarioEstado usuarioEstado) {
+        this.id=id;
+        this.correo=correo;
+        this.contraseña=contraseña;
+        this.nombre=nombre;
+        this.rol=rol;
+        this.estado=usuarioEstado;
+
+    }
+
+    public Usuario(String string, String mail, String s, Object o, String carlosPérez, LocalDate of, Rol rol, UsuarioEstado usuarioEstado) {
     }
 }

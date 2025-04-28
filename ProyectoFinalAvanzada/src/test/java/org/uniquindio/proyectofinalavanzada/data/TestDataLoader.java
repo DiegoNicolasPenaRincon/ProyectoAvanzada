@@ -5,12 +5,13 @@ import org.uniquindio.proyectofinalavanzada.repositories.UsuarioRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TestDataLoader {
 
-    public static Map<String, Usuario> loadTestData(
+    /*public static Map<String, Usuario> loadTestData(
             UsuarioRepository usuarioRepository,
             MongoTemplate mongoTemplate,
             PasswordEncoder passwordEncoder) {
@@ -59,5 +60,23 @@ public class TestDataLoader {
 
         return usuarioRepository.saveAll(usuarios).stream()
                 .collect(Collectors.toMap(Usuario::getId, usuario -> usuario));
+    }
+
+     */
+
+    public static Map<String, Usuario> loadTestData(
+            UsuarioRepository usuarioRepositorio, MongoTemplate mongoTemplate) {
+        return loadTestData(
+                List.of(
+                        new Usuario(UUID.randomUUID().toString(),"ana@example.com", "{noop}12346Abc",
+                                "Ana López",8,27), Rol.USER, UsuarioEstado.ACTIVO),
+                        new Usuario(UUID.randomUUID().toString(),"carlos@example.com","{noop}12346Abc"
+                                "Carlos Pérez", LocalDate.of(1984,10,28), Rol.USER, UsuarioEstado.ACTIVO),
+                        new Usuario(UUID.randomUUID().toString(),"juan@example.com","{noop}12346Abc",
+                                "Juan Root", Rol.ADMIN, UsuarioEstado.ACTIVO)
+                ),
+                usuarioRepositorio,
+                mongoTemplate
+        );
     }
 }
