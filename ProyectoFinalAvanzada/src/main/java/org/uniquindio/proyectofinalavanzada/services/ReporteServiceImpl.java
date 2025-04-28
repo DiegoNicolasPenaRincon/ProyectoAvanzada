@@ -6,6 +6,7 @@ import org.uniquindio.proyectofinalavanzada.domain.Reporte;
 import org.uniquindio.proyectofinalavanzada.dtos.ReporteDTO;
 import org.uniquindio.proyectofinalavanzada.dtos.ReporteResponseDTO;
 import org.uniquindio.proyectofinalavanzada.exception.ResourceNotFoundException;
+import org.uniquindio.proyectofinalavanzada.exception.ValueConflictException;
 import org.uniquindio.proyectofinalavanzada.mappers.ReporteMapper;
 import org.uniquindio.proyectofinalavanzada.repositories.ReporteRepository;
 import org.uniquindio.proyectofinalavanzada.services.ReporteService;
@@ -24,6 +25,9 @@ public class ReporteServiceImpl implements ReporteService {
 
     @Override
     public ReporteResponseDTO crearReporte(ReporteDTO reporteDTO) throws Exception {
+        if(reporteRepository.existByTituloIgnoreCase(reporteDTO.titulo())){
+            throw new ValueConflictException("El titulo de este reporte ya existe");
+        }
         Reporte reporte = reporteMapper.toReporte(reporteDTO);
         reporte = reporteRepository.save(reporte); 
         return reporteMapper.toReporteResponseDTO(reporte);
@@ -42,6 +46,15 @@ public class ReporteServiceImpl implements ReporteService {
         } else {
             reportes = reporteRepository.findAll();
         }
+
+        return reportes.stream()
+                .map(reporteMapper::toReporteResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReporteResponseDTO> listarTodosReportes() {
+        List<Reporte> reportes = reporteRepository.findAll();
 
         return reportes.stream()
                 .map(reporteMapper::toReporteResponseDTO)

@@ -7,6 +7,7 @@ import java.util.List;
 public interface ReporteService {
     ReporteResponseDTO crearReporte(ReporteDTO reporteDTO) throws Exception;
     List<ReporteResponseDTO> listarReportes(String categoria, String estado);
+    List<ReporteResponseDTO> listarTodosReportes();
     ReporteResponseDTO editarReporte(String id, ReporteDTO reporteDTO) throws Exception;
     void eliminarReporte(String id) throws Exception;
 }
