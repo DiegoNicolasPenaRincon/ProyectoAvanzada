@@ -25,7 +25,7 @@ public class ReporteServiceImpl implements ReporteService {
 
     @Override
     public ReporteResponseDTO crearReporte(ReporteDTO reporteDTO) throws Exception {
-        if(reporteRepository.existByTituloIgnoreCase(reporteDTO.titulo())){
+        if(reporteRepository.existsByTituloIgnoreCase(reporteDTO.titulo())){
             throw new ValueConflictException("El titulo de este reporte ya existe");
         }
         Reporte reporte = reporteMapper.toReporte(reporteDTO);

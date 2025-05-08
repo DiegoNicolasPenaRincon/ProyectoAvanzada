@@ -11,5 +11,5 @@ public interface ReporteRepository extends MongoRepository<Reporte, String> {
     List<Reporte> findByCategorias(String categoria);
     List<Reporte> findByEstado(String estado);
     List<Reporte> findByCategoriasAndEstado(String categoria, String estado);
-    boolean existByTituloIgnoreCase(String titulo);
+    boolean existsByTituloIgnoreCase(String titulo);
 }
