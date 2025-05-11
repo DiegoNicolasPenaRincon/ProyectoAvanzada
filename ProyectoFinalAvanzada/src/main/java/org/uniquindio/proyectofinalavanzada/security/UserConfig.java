@@ -12,7 +12,7 @@ public class UserConfig {
     @Bean
     public UserDetailsService userDetailsServiceFromDataBase(
             UsuarioRepository userRepository){
-        return username -> userRepository.findUserByEmail(username)
+        return username -> userRepository.findUserByCorreo(username)
                 .map(CustomUserDetails::new)
                 .orElseThrow(
                         () -> new UsernameNotFoundException("Usuario no encontrado"));

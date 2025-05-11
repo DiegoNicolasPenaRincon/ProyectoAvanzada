@@ -21,9 +21,8 @@ public interface UsuarioRepository extends MongoRepository<Usuario, String> {
     boolean existsByCorreoIgnoreCase(String correo);
     Optional<Usuario> findByCorreoIgnoreCase(String correo);
     Optional<Usuario> findByCorreoIgnoreCaseAndContraseña(String correo, String contraseña);
-    Optional<Usuario> findByCorreo(String correo);
+    Optional<Usuario> findUserByCorreo(String correo);
     Optional<Usuario> findById(String id);
-    Optional<Usuario> findUserByEmail(String email);
 
     @Query(value = "{ 'status': { $ne: 'DELETED' }, 'email': ?0 }")
     Optional<Usuario> findExistingUserByEmail(String email);
@@ -35,5 +34,5 @@ public interface UsuarioRepository extends MongoRepository<Usuario, String> {
             sort = "{ 'fullName': 1 }")
     Page<Usuario> findExistingUsersByFilters(String fullName, String email, LocalDate dateBirth, Pageable pageable);
 
-    List<UsuarioResponseDTO> findByStatusNot(UsuarioEstado status);
+    List<UsuarioResponseDTO> findByEstadoNot(UsuarioEstado status);
 }
