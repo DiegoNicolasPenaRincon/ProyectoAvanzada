@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ProyectoAvanzada.iml" filepath="$PROJECT_DIR$/.idea/ProyectoAvanzada.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ProyectoFinalAvanzada.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ProyectoFinalAvanzada.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ProyectoFinalAvanzada.test.iml" filepath="$PROJECT_DIR$/.idea/modules/ProyectoFinalAvanzada.test.iml" />
     </modules>
   </component>
 </project>
