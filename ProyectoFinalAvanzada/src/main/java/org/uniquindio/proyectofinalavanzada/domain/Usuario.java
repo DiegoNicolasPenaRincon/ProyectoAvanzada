@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -70,7 +69,4 @@ public class Usuario {
     @Field("estado")
     @NotNull
     private UsuarioEstado estado;
-
-    public Usuario(String string, String usuario, String encode, String usuario1, LocalDate of, Rol rol, UsuarioEstado usuarioEstado) {
-    }
 }

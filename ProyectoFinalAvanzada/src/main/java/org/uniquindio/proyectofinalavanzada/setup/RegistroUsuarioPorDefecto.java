@@ -5,7 +5,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.uniquindio.proyectofinalavanzada.domain.Usuario;
-import org.uniquindio.proyectofinalavanzada.domain.UsuarioEstado;
 import org.uniquindio.proyectofinalavanzada.repositories.UsuarioRepository;
 
 import java.time.LocalDate;
@@ -32,7 +31,7 @@ public class RegistroUsuarioPorDefecto implements CommandLineRunner {
         return new Usuario(UUID.randomUUID().toString(), usuario.usuario(),
                 passwordEncoder.encode(usuario.contrasenia()),
                 usuario.usuario(), LocalDate.of(1982, 8, 27),
-                usuario.rol(), UsuarioEstado.ACTIVO);
+                usuario.rol(), UserStatus.ACTIVE);
 
     }
 }
