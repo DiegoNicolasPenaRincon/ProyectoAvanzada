@@ -5,12 +5,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.uniquindio.proyectofinalavanzada.Security.JwtTokenProvider;
 import org.uniquindio.proyectofinalavanzada.dtos.LoginDTO;
 import org.uniquindio.proyectofinalavanzada.dtos.TokenResponse;
-import org.uniquindio.proyectofinalavanzada.repositories.UsuarioRepository;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -20,7 +18,6 @@ import java.time.temporal.ChronoUnit;
 public class SeguridadServiceImpl implements SeguridadService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private final UsuarioRepository usuarioRepository;
 
     @Value("${jwt.expiry}")
     private long expirado;
@@ -38,15 +35,6 @@ public class SeguridadServiceImpl implements SeguridadService {
                 jwtTokenProvider.generateTokenAsString(
                         authentication.getName(),roles,now,expire),
                 "Bearer",expire,roles);
-
-    }
-
-    public boolean esElUsuarioActual(String id) {
-        String username = SecurityContextHolder.getContext()
-                .getAuthentication().getName();
-        return usuarioRepository.findById(id)
-                .map(user -> user.getCorreo().equals(username))
-                .orElse(false);
 
     }
 }
