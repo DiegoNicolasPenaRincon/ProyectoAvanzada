@@ -13,7 +13,6 @@ public interface UsuarioRepository extends MongoRepository<Usuario, String> {
     void deleteByCorreo(String correo);
     boolean existsByCorreoIgnoreCase(String correo);
     Optional<Usuario> findByCorreoIgnoreCase(String correo);
-    Optional<Usuario> findUsuarioByCorreo(String correo);
     Optional<Usuario> findByCorreoIgnoreCaseAndContraseña(String correo, String contraseña);
     Optional<Usuario> findByCorreo(String correo);
 }

@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class DetallesConsumidor implements UserDetails {
+public class DetallerConsumidor implements UserDetails {
     private final Usuario usuario;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
