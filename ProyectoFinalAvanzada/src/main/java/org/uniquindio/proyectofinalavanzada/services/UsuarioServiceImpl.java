@@ -27,6 +27,10 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new ValueConflictException("El correo ya está registrado");
         }
 
+        if(usuarioRepository.existsByIdIgnoreCase(usuarioRegistroDTO.id())) {
+            throw new ValueConflictException("La cedula ya se encuentra registrada.");
+        }
+
         Usuario usuario = usuarioMapper.toUsuario(usuarioRegistroDTO);
         usuario.setVerificado(false); // Asegura que no esté verificado por defecto
         usuario = usuarioRepository.save(usuario);

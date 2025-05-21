@@ -11,15 +11,17 @@ import java.util.UUID;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UsuarioMapper {
-    @Mapping(target = "id", expression = "java(generateId())")
+    //@Mapping(target = "id", expression = "java(generateId())")
     @Mapping(target = "rol", constant = "USER")
-    @Mapping(target = "verificado", constant = "false")
+    @Mapping(target = "verificado", constant = "true")
     @Mapping(target = "estado", constant = "REGISTRADO")
     Usuario toUsuario(UsuarioRegistroDTO dto);
 
     UsuarioResponseDTO toUsuarioResponseDTO(Usuario usuario);
-
+/*
     default String generateId() {
         return UUID.randomUUID().toString();
     }
+
+ */
 }

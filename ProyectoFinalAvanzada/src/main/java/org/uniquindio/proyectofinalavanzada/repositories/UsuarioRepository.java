@@ -19,6 +19,7 @@ public interface UsuarioRepository extends MongoRepository<Usuario, String> {
     @Transactional
     void deleteByCorreo(String correo);
     boolean existsByCorreoIgnoreCase(String correo);
+    boolean existsByIdIgnoreCase(String id);
     Optional<Usuario> findByCorreoIgnoreCase(String correo);
     Optional<Usuario> findByCorreoIgnoreCaseAndContraseña(String correo, String contraseña);
     Optional<Usuario> findUserByCorreo(String correo);
