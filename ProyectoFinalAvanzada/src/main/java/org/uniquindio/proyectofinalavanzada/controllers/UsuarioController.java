@@ -20,7 +20,7 @@ public class UsuarioController {
     @PutMapping
     public ResponseEntity<MensajeDTO> editarPerfil(@Valid @RequestBody UsuarioEditarDTO usuarioEditarDTO) throws Exception {
         // En una implementación real, el ID vendría del token de autenticación
-        String usuarioId = "usuario-simulado";
+        String usuarioId = usuarioEditarDTO.id();
         usuarioService.editarPerfil(usuarioId, usuarioEditarDTO);
         return ResponseEntity.ok(new MensajeDTO("Datos actualizados correctamente."));
     }
