@@ -13,5 +13,5 @@ public record UsuarioRegistroDTO(
         @NotBlank String direccion,
         @NotBlank @Email String correo,
         @NotBlank @Size(min = 8) String contraseña,
-        GeoJsonPoint ubicacion
+        @NotNull GeoJsonPoint ubicacion
 ) {}

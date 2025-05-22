@@ -35,16 +35,16 @@ public class pruebaMongo{
         GeoJsonPoint ubicacion = new GeoJsonPoint(-75.681114, 4.533889); // Armenia
 
         Usuario nuevoUsuario = Usuario.builder()
-                .nombre("Juan Pérez")
-                .correo("juan.perez@test.com")
-                .telefono("3214567890")
-                .direccion("Calle 123 #45-67")
+                .nombre("Admin")
+                .correo("admin@test.com")
+                .telefono("3152157717")
+                .direccion("La Brasilia")
                 .ciudadResidencia("Armenia")
-                .contraseña("1234segura")
+                .contraseña("administrador")
                 .ubicacion(ubicacion)
-                .rol(Rol.USER)
+                .rol(Rol.ADMIN)
                 .estado(UsuarioEstado.ACTIVO)
-                .verificado(false)
+                .verificado(true)
                 .build();
 
         usuarioRepository.save(nuevoUsuario);
