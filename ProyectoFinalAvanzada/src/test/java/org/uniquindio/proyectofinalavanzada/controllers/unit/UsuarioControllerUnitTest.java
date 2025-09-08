@@ -92,6 +92,7 @@ public class UsuarioControllerUnitTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").value("Cuenta eliminada correctamente."));
     }
+    
 /*
     @Test
     void testEliminarPerfilThrowsValueConflictException() throws Exception {
